@@ -1,6 +1,7 @@
 #include "Entity.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 // Makes a new, empty entity
 Entity* CreateEntity(int numBytes)
@@ -148,6 +149,7 @@ void AddPropertyToEntity(Entity* entity, char* data, int size, const char* label
   memcpy(newData + entity->propertyBytes, data, size);
   //free the old data
   free(entity->data);
+
   //assign the new one
   entity->data = newData;
 
@@ -161,6 +163,7 @@ void AddPropertyToEntity(Entity* entity, char* data, int size, const char* label
   //make a new label
   labels[i].name = label;
   labels[i].byteOffset = entity->propertyBytes;
+
   //free the old data
   free(entity->propertyLabels);
   //assign the new one
@@ -266,10 +269,10 @@ void* GetPropertyOfEntity(const Entity* entity, const char* label)
 
   for (i = 0; i < entity->numProperties; ++i)
   {
+    offset += entity->propertyLabels[i].byteOffset;
+
     if (strcmp(label, entity->propertyLabels[i].name) == 0)
       break;
-
-    offset += entity->propertyLabels[i].byteOffset;
   }
 
   if (i == entity->numProperties)
@@ -294,4 +297,26 @@ Behavior GetBehaviorOfEntity(const Entity* entity, const char* label)
     return NULL;
 
   return entity->behaviors[i];
+}
+// -----------------------------------------------------------------------------
+// Gets the size of an entity's property in number of bytes
+// returns -1 if the entity does not have a property with the supplied name
+int GetSizeOfProperty(const Entity* entity, const char* label)
+{
+  int i;
+
+  for (i = 0; i < entity->numProperties; ++i)
+  {
+    if (strcmp(label, entity->propertyLabels[i].name) == 0)
+      break;
+  }
+
+  if (i == entity->numProperties)
+    return -1;
+
+  if (i == entity->numProperties - 1)
+    return entity->propertyBytes - entity->propertyLabels[i].byteOffset;
+
+  return entity->propertyLabels[i + 1].byteOffset - 
+    entity->propertyLabels[i].byteOffset;
 }

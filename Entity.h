@@ -34,6 +34,7 @@ int EntityHasProperty(const Entity* entity, const char* label);
 int EntityHasBehavior(const Entity* entity, const char* label);
 void* GetPropertyOfEntity(const Entity* entity, const char* label);
 Behavior GetBehaviorOfEntity(const Entity* entity, const char* label);
+int GetSizeOfProperty(const Entity* entity, const char* label);
 
 ////////////////////////////////////////////////////////////////////////////////
 #endif
